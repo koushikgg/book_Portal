@@ -85,6 +85,11 @@ function addBooks() {
     for (let value of bookStoreList) {
         if (value.id == orderBookId) {
             const cartItem = cart.find(book => book.id == orderBookId);
+            if (value.quantity<orderBookQuantity){
+                console.log(`The available Quantity is ${value.quantity} your Quantity is Over the Limit`)
+                console.log("take new quantity\n")
+                return;
+            }
             if (cartItem) {
                 cartItem.quantity += orderBookQuantity;
             } else {
@@ -100,7 +105,7 @@ function addBooks() {
                     }
                 }
             }
-            console.log("Book added to the cart successfully");
+            console.log("Book added to the cart successfully\n");
             return;
         }
     }
@@ -115,5 +120,5 @@ function showCart() {
         totalCartValue+=totalPrice;
         console.log(`Name: <${item.name}> Price: <${item.price}> Quantity: ${item.quantity} Total Price: ${totalPrice}`);
     }
-    console.log(`Your Total Cart Value is ${totalCartValue}`)
+    console.log(`Your Total Cart Value is ${totalCartValue}\n`)
 }
