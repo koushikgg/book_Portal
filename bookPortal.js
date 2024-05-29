@@ -43,8 +43,8 @@ const cart = [];
 var condition = true;
 
 while (condition) {
-    let userInput = readline.questionInt("The Book Portal Menu\n 1. show available books\n 2. add book\n 3. show cart\n 4. Exit\n");
-    if (userInput != 1 && userInput != 2 && userInput != 3 && userInput != 4) {
+    let userInput = readline.questionInt("The Book Portal Menu\n 1. show available books\n 2. add book\n 3. show cart\n 4. Update Cart\n 5. Exit\n");
+    if (userInput != 1 && userInput != 2 && userInput != 3 && userInput != 4 && userInput != 5) {
         console.log("Please Enter in Below Range Only");
         continue;
     }
@@ -59,6 +59,28 @@ while (condition) {
             showCart();
             break;
         case 4:
+            let updateInput = readline.questionInt("Upadte The Cart\n 1. Increase Quantity\n 2. Decrease Quantity\n 3. Remove Item\n");
+            if (updateInput != 1 && updateInput != 2 && updateInput != 3) {
+                console.log("Please Enter Input in Above Range Only");
+                continue;
+            }else{
+                switch (parseInt(updateInput)){
+                    case 1:
+                        increaseQuantity();
+                        break;
+                    case 2:
+                        decreaseQuantity();
+                        break;
+                    case 3:
+                        removeItem();
+                        break;
+                    default:
+                        console.log("Invalid Entry Please Enter Within Menu! ")
+                        break;
+                }
+            }
+            break;
+        case 5:
             condition = false;
             break;
         default:
@@ -121,4 +143,77 @@ function showCart() {
         console.log(`Name: <${item.name}> Price: <${item.price}> Quantity: ${item.quantity} Total Price: ${totalPrice}`);
     }
     console.log(`Your Total Cart Value is ${totalCartValue}\n`)
+}
+
+
+//this function is to increase item quantity the cart
+function increaseQuantity(){
+    let orderBookId = readline.questionInt("Enter The Book ID to Add to Cart\n");
+    let orderBookQuantity = readline.questionInt("Enter The Quantity of Book to Add to Cart\n");
+
+    for (let value of cart) {
+        if (value.id == orderBookId) {
+            const bookItem = bookStoreList.find(book => book.id == orderBookId);
+            if (bookItem.quantity<orderBookQuantity){
+                console.log(`The available Quantity is ${bookItem.quantity} your Quantity is Over the Limit`)
+                console.log("take new quantity\n")
+                return;
+            }
+            value.quantity+=orderBookQuantity
+            for (let item of bookStoreList) {
+                if (orderBookId == item.id) {
+                    item.quantity -= orderBookQuantity;
+                    if (item.quantity <= 0) {
+                        item.status = "unavailable";
+                    }
+                }
+            }
+            console.log("Book Quantity Increased in the cart successfully\n");
+            return;
+        }
+    }
+}
+
+//this function is to decrease item quantity the cart
+function decreaseQuantity(){
+    let orderBookId = readline.questionInt("Enter The Book ID to Add to Cart\n");
+    let orderBookQuantity = readline.questionInt("Enter The Quantity of Book to Add to Cart\n");
+
+    for (let value of cart) {
+        if (value.id == orderBookId) {
+            if (value.quantity<orderBookQuantity){
+                console.log(`The available Quantity in Cart is ${value.quantity} your Quantity is Over the Limit`)
+                console.log("take new quantity\n")
+                return;
+            }
+            value.quantity-=orderBookQuantity;
+            const bookItem = bookStoreList.find(book => book.id == orderBookId);
+            bookItem.quantity+=orderBookQuantity
+            if (bookItem.quantity>0){
+                bookItem.status = "available";
+            }
+            console.log("Book Quantity Increased in the cart successfully\n");
+            return;
+        }
+    }
+}
+
+//this function used to remove Item Form The cart
+function removeItem(){
+    let orderBookId = readline.questionInt("Enter The Book ID to Add to Cart\n");
+
+    for (let value of cart) {
+        if (value.id == orderBookId) {
+            const bookItem = bookStoreList.find(book => book.id == orderBookId);
+            bookItem.quantity+=value.quantity
+            //delete here
+            let index = cart.indexOf(value)
+            cart.splice(index,1);
+            if (bookItem.quantity>0){
+                bookItem.status = "available";
+            }
+            console.log("Book Deleted From the cart successfully\n");
+            return;
+        }
+    }
 }
